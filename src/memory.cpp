@@ -1,123 +1,64 @@
-
 #include <memory.h>
 
-using namespace mangoos;
-using namespace mangoos::common;
+static char *HEAP = 0x000000;
+static unsigned int _last = 0;
 
-MemoryManager *MemoryManager::activeMemoryManager = 0;
-
-MemoryManager::MemoryManager(size_t start, size_t size)
+void memcpy(char *from, char *to, int count)
 {
-	activeMemoryManager = this;
-
-	if (size < sizeof(MemoryChunk))
+	while (count--)
 	{
-		first = 0;
-	}
-	else
-	{
-		first = (MemoryChunk *)start;
-
-		first->allocated = false;
-		first->prev = 0;
-		first->next = 0;
-		first->size = size - sizeof(MemoryChunk);
+		*to++ = *from++;
 	}
 }
 
-MemoryManager::~MemoryManager()
+void memcpyTF(char *to, char *from, int count)
 {
-	if (activeMemoryManager == this)
-		activeMemoryManager = 0;
-}
-
-void *MemoryManager::malloc(size_t size)
-{
-	MemoryChunk *result = 0;
-
-	for (MemoryChunk *chunk = first; chunk != 0 && result == 0; chunk = chunk->next)
-		if (chunk->size > size && !chunk->allocated)
-			result = chunk;
-
-	if (result == 0)
-		return 0;
-
-	if (result->size >= size + sizeof(MemoryChunk) + 1)
+	while (count--)
 	{
-		MemoryChunk *temp = (MemoryChunk *)((size_t)result + sizeof(MemoryChunk) + size);
-
-		temp->allocated = false;
-		temp->size = result->size - size - sizeof(MemoryChunk);
-		temp->prev = result;
-		temp->next = result->next;
-		if (temp->next != 0)
-			temp->next->prev = temp;
-
-		result->size = size;
-		result->next = temp;
-	}
-
-	result->allocated = true;
-	return (void *)(((size_t)result) + sizeof(MemoryChunk));
-}
-
-void MemoryManager::free(void *ptr)
-{
-	MemoryChunk *chunk = (MemoryChunk *)((size_t)ptr - sizeof(MemoryChunk));
-
-	chunk->allocated = false;
-
-	if (chunk->prev != 0 && !chunk->prev->allocated)
-	{
-		chunk->prev->next = chunk->next;
-		chunk->prev->size += chunk->size + sizeof(MemoryChunk);
-		if (chunk->next != 0)
-			chunk->next->prev = chunk->prev;
-
-		chunk = chunk->prev;
-	}
-
-	if (chunk->next != 0 && !chunk->next->allocated)
-	{
-		chunk->size += chunk->next->size + sizeof(MemoryChunk);
-		chunk->next = chunk->next->next;
-		if (chunk->next != 0)
-			chunk->next->prev = chunk;
+		*to++ = *from++;
 	}
 }
 
-void *operator new(unsigned size)
+// sets count bytes of dest to val
+void *memset(void *dest, char val, size_t count)
 {
-	if (mangoos::MemoryManager::activeMemoryManager == 0)
-		return 0;
-	return mangoos::MemoryManager::activeMemoryManager->malloc(size);
+	unsigned char *temp = (unsigned char *)dest;
+	for (; count != 0; count--, temp[count] = val)
+		;
+	return dest;
 }
 
-void *operator new[](unsigned size)
+// sets count bytes of dest to val
+unsigned short *memsetw(unsigned short *dest, unsigned short val, size_t count)
 {
-	if (mangoos::MemoryManager::activeMemoryManager == 0)
-		return 0;
-	return mangoos::MemoryManager::activeMemoryManager->malloc(size);
+	unsigned short *temp = (unsigned short *)dest;
+	for (; count != 0; count--)
+		*temp++ = val;
+	return dest;
 }
 
-void *operator new(unsigned size, void *ptr)
+bool pm_setup(char *heap)
 {
-	return ptr;
+	HEAP = heap;
+	//_last = (unsigned int)&HEAP;
+	return (heap == HEAP) ? true : false;
 }
 
-void *operator new[](unsigned size, void *ptr)
+void *malloc(int bytes)
 {
-	return ptr;
+	void *ret;
+	ret = (void *)HEAP;
+	HEAP += bytes;
+	return ret;
 }
-
-void operator delete(void *ptr)
+void *malloc_p(int bytes)
 {
-	if (mangoos::MemoryManager::activeMemoryManager != 0)
-		mangoos::MemoryManager::activeMemoryManager->free(ptr);
+	void *ret;
+	ret = (void *)(((int)HEAP + 0x1000) & 0xFFFFF000);
+	HEAP = (char *)((int)ret + bytes);
+	return ret;
 }
-
-void operator delete[](void *ptr)
+void *malloc_ps(char *start, int bytes)
 {
-	if (mangoos::MemoryManager::activeMemoryManager != 0)
-		mangoos::MemoryManager::activeMemoryManager->free(ptr);
+	return start;
 }

@@ -2,6 +2,7 @@
 
 #include <gdt.h>
 #include <memory.h>
+#include <string.h>
 
 #include <drivers/driver.h>
 #include <drivers/keyboard.h>
@@ -70,36 +71,6 @@ void printfHex(uint8_t key)
 	printf(foo);
 }
 
-void taskA()
-{
-	while (true)
-		printf("A\n");
-}
-
-void taskB()
-{
-	while (true)
-		printf("b\n");
-}
-
-class Shell : public KeyboardEventHandler
-{
-  private:
-	TaskManager *taskManager;
-
-  public:
-	Shell(TaskManager *taskManager)
-	{
-	}
-
-	void OnKeyDown(char c)
-	{
-		char *foo = " ";
-		foo[0] = c;
-		printf(foo);
-	}
-}
-
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
@@ -109,24 +80,63 @@ extern "C" void callConstructors()
 		(*i)();
 }
 
+class Shell : public KeyboardEventHandler
+{
+  private:
+	char *currentLine;
+	int lineLength;
+
+  public:
+	void OnKeyDown(char c)
+	{
+		char *temp;
+		memcpy(temp, currentLine, lineLength + 1);
+		temp[lineLength] = c;
+		memcpy(currentLine, temp, lineLength++);
+
+		char *foo = " ";
+		foo[0] = c;
+		printf(foo);
+
+		if (c == '\n')
+		{
+			RunLine();
+			ClearLine();
+		}
+	}
+
+	void RunLine()
+	{
+		if (str_begins_with(currentLine, "test") > 0)
+		{
+			printf("YOOOO");
+		} else {
+			
+		}
+	}
+
+	void ClearLine()
+	{
+		currentLine = "";
+		lineLength = 0;
+	}
+};
+
 extern "C" void kernelMain(const void *multiboot_structure, uint32_t /*multiboot_magic*/)
 {
 	printf("Loading...");
 
 	GlobalDescriptorTable gdt;
 
-	uint32_t *memupper = (uint32_t *)(((size_t)multiboot_structure) + 8);
-	size_t heap = 10 * 1024 * 1024;
-	MemoryManager memoryManager(heap, (*memupper) * 1024 - heap - 10 * 1024);
-
 	TaskManager taskManager;
-	Shell *shell = new Shell(&taskManager);
 
 	InterruptManager interrupts(0x20, &gdt, &taskManager);
 
 	printf("Initializing Hardware, Stage 1\n");
 
 	DriverManager drvManager;
+
+	Shell *shell = new Shell();
 
 	KeyboardDriver keyboard(&interrupts, shell);
 	drvManager.AddDriver(&keyboard);

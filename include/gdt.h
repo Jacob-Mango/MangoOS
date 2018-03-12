@@ -12,17 +12,17 @@ class GlobalDescriptorTable
 	class SegmentDescriptor
 	{
 	  private:
-		mangoos::common::uint16_t limit_lo;
-		mangoos::common::uint16_t base_lo;
-		mangoos::common::uint8_t base_hi;
-		mangoos::common::uint8_t type;
-		mangoos::common::uint8_t limit_hi;
-		mangoos::common::uint8_t base_vhi;
+		uint16_t limit_lo;
+		uint16_t base_lo;
+		uint8_t base_hi;
+		uint8_t type;
+		uint8_t limit_hi;
+		uint8_t base_vhi;
 
 	  public:
-		SegmentDescriptor(mangoos::common::uint32_t base, mangoos::common::uint32_t limit, mangoos::common::uint8_t type);
-		mangoos::common::uint32_t Base();
-		mangoos::common::uint32_t Limit();
+		SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t type);
+		uint32_t Base();
+		uint32_t Limit();
 	} __attribute__((packed));
 
   private:
@@ -35,8 +35,8 @@ class GlobalDescriptorTable
 	GlobalDescriptorTable();
 	~GlobalDescriptorTable();
 
-	mangoos::common::uint16_t CodeSegmentSelector();
-	mangoos::common::uint16_t DataSegmentSelector();
+	uint16_t CodeSegmentSelector();
+	uint16_t DataSegmentSelector();
 };
 }
 

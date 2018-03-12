@@ -1,6 +1,5 @@
 #include <gdt.h>
 using namespace mangoos;
-using namespace mangoos::common;
 
 GlobalDescriptorTable::GlobalDescriptorTable()
 	: nullSegmentSelector(0, 0, 0),

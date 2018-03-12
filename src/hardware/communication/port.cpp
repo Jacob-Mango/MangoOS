@@ -1,6 +1,5 @@
 #include <hardware/communication/port.h>
 
-using namespace mangoos::common;
 using namespace mangoos::hardware::communication;
 
 Port::Port(uint16_t portnumber)

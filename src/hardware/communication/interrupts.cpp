@@ -1,6 +1,5 @@
 #include <hardware/communication/interrupts.h>
 
-using namespace mangoos::common;
 using namespace mangoos::hardware::communication;
 
 void printf(char *str);

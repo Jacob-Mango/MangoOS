@@ -21,13 +21,13 @@ class InterruptManager;
 class InterruptHandler
 {
   protected:
-	mangoos::common::uint8_t InterruptNumber;
+	uint8_t InterruptNumber;
 	InterruptManager *interruptManager;
-	InterruptHandler(InterruptManager *interruptManager, mangoos::common::uint8_t InterruptNumber);
+	InterruptHandler(InterruptManager *interruptManager, uint8_t InterruptNumber);
 	~InterruptHandler();
 
   public:
-	virtual mangoos::common::uint32_t HandleInterrupt(mangoos::common::uint32_t esp);
+	virtual uint32_t HandleInterrupt(uint32_t esp);
 };
 
 class InterruptManager
@@ -41,25 +41,25 @@ class InterruptManager
 
 	struct GateDescriptor
 	{
-		mangoos::common::uint16_t handlerAddressLowBits;
-		mangoos::common::uint16_t gdt_codeSegmentSelector;
-		mangoos::common::uint8_t reserved;
-		mangoos::common::uint8_t access;
-		mangoos::common::uint16_t handlerAddressHighBits;
+		uint16_t handlerAddressLowBits;
+		uint16_t gdt_codeSegmentSelector;
+		uint8_t reserved;
+		uint8_t access;
+		uint16_t handlerAddressHighBits;
 	} __attribute__((packed));
 
 	static GateDescriptor interruptDescriptorTable[256];
 
 	struct InterruptDescriptorTablePointer
 	{
-		mangoos::common::uint16_t size;
-		mangoos::common::uint32_t base;
+		uint16_t size;
+		uint32_t base;
 	} __attribute__((packed));
 
-	mangoos::common::uint16_t hardwareInterruptOffset;
-	static void SetInterruptDescriptorTableEntry(mangoos::common::uint8_t interrupt,
-												 mangoos::common::uint16_t codeSegmentSelectorOffset, void (*handler)(),
-												 mangoos::common::uint8_t DescriptorPrivilegeLevel, mangoos::common::uint8_t DescriptorType);
+	uint16_t hardwareInterruptOffset;
+	static void SetInterruptDescriptorTableEntry(uint8_t interrupt,
+												 uint16_t codeSegmentSelectorOffset, void (*handler)(),
+												 uint8_t DescriptorPrivilegeLevel, uint8_t DescriptorType);
 
 	static void InterruptIgnore();
 
@@ -104,8 +104,8 @@ class InterruptManager
 	static void HandleException0x12();
 	static void HandleException0x13();
 
-	static mangoos::common::uint32_t HandleInterrupt(mangoos::common::uint8_t interrupt, mangoos::common::uint32_t esp);
-	mangoos::common::uint32_t DoHandleInterrupt(mangoos::common::uint8_t interrupt, mangoos::common::uint32_t esp);
+	static uint32_t HandleInterrupt(uint8_t interrupt, uint32_t esp);
+	uint32_t DoHandleInterrupt(uint8_t interrupt, uint32_t esp);
 
 	Port8BitSlow programmableInterruptControllerMasterCommandPort;
 	Port8BitSlow programmableInterruptControllerMasterDataPort;
@@ -113,9 +113,9 @@ class InterruptManager
 	Port8BitSlow programmableInterruptControllerSlaveDataPort;
 
   public:
-	InterruptManager(mangoos::common::uint16_t hardwareInterruptOffset, mangoos::GlobalDescriptorTable *globalDescriptorTable, mangoos::TaskManager *taskManager);
+	InterruptManager(uint16_t hardwareInterruptOffset, mangoos::GlobalDescriptorTable *globalDescriptorTable, mangoos::TaskManager *taskManager);
 	~InterruptManager();
-	mangoos::common::uint16_t HardwareInterruptOffset();
+	uint16_t HardwareInterruptOffset();
 	void Activate();
 	void Deactivate();
 };

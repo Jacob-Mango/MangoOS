@@ -1,5 +1,5 @@
 #include <hardware/communication/pci.h>
-using namespace mangoos::common;
+
 using namespace mangoos::drivers;
 using namespace mangoos::hardware::communication;
 
@@ -36,7 +36,7 @@ void PeripheralComponentInterconnectController::Write(uint16_t bus, uint16_t dev
 	dataPort.Write(value);
 }
 
-bool PeripheralComponentInterconnectController::DeviceHasFunctions(common::uint16_t bus, common::uint16_t device)
+bool PeripheralComponentInterconnectController::DeviceHasFunctions(uint16_t bus, uint16_t device)
 {
 	return Read(bus, device, 0, 0x0E) & (1 << 7);
 }

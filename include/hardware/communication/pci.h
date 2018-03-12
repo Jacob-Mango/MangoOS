@@ -25,29 +25,29 @@ class BaseAddressRegister
 {
   public:
 	bool prefetchable;
-	mangoos::common::uint8_t *address;
-	mangoos::common::uint32_t size;
+	uint8_t *address;
+	uint32_t size;
 	BaseAddressRegisterType type;
 };
 
 class PeripheralComponentInterconnectDeviceDescriptor
 {
   public:
-	mangoos::common::uint32_t portBase;
-	mangoos::common::uint32_t interrupt;
+	uint32_t portBase;
+	uint32_t interrupt;
 
-	mangoos::common::uint16_t bus;
-	mangoos::common::uint16_t device;
-	mangoos::common::uint16_t function;
+	uint16_t bus;
+	uint16_t device;
+	uint16_t function;
 
-	mangoos::common::uint16_t vendor_id;
-	mangoos::common::uint16_t device_id;
+	uint16_t vendor_id;
+	uint16_t device_id;
 
-	mangoos::common::uint8_t class_id;
-	mangoos::common::uint8_t subclass_id;
-	mangoos::common::uint8_t interface_id;
+	uint8_t class_id;
+	uint8_t subclass_id;
+	uint8_t interface_id;
 
-	mangoos::common::uint8_t revision;
+	uint8_t revision;
 
 	PeripheralComponentInterconnectDeviceDescriptor();
 	~PeripheralComponentInterconnectDeviceDescriptor();
@@ -62,14 +62,14 @@ class PeripheralComponentInterconnectController
 	PeripheralComponentInterconnectController();
 	~PeripheralComponentInterconnectController();
 
-	mangoos::common::uint32_t Read(mangoos::common::uint16_t bus, mangoos::common::uint16_t device, mangoos::common::uint16_t function, mangoos::common::uint32_t registeroffset);
-	void Write(mangoos::common::uint16_t bus, mangoos::common::uint16_t device, mangoos::common::uint16_t function, mangoos::common::uint32_t registeroffset, mangoos::common::uint32_t value);
-	bool DeviceHasFunctions(mangoos::common::uint16_t bus, mangoos::common::uint16_t device);
+	uint32_t Read(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset);
+	void Write(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value);
+	bool DeviceHasFunctions(uint16_t bus, uint16_t device);
 
 	void SelectDrivers(mangoos::drivers::DriverManager *driverManager, mangoos::hardware::communication::InterruptManager *interrupts);
 	mangoos::drivers::Driver *GetDriver(PeripheralComponentInterconnectDeviceDescriptor dev, mangoos::hardware::communication::InterruptManager *interrupts);
-	PeripheralComponentInterconnectDeviceDescriptor GetDeviceDescriptor(mangoos::common::uint16_t bus, mangoos::common::uint16_t device, mangoos::common::uint16_t function);
-	BaseAddressRegister GetBaseAddressRegister(mangoos::common::uint16_t bus, mangoos::common::uint16_t device, mangoos::common::uint16_t function, mangoos::common::uint16_t bar);
+	PeripheralComponentInterconnectDeviceDescriptor GetDeviceDescriptor(uint16_t bus, uint16_t device, uint16_t function);
+	BaseAddressRegister GetBaseAddressRegister(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar);
 };
 }
 }

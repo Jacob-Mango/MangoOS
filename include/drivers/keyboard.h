@@ -32,7 +32,7 @@ class KeyboardDriver : public mangoos::hardware::communication::InterruptHandler
   public:
 	KeyboardDriver(mangoos::hardware::communication::InterruptManager *manager, KeyboardEventHandler *handler);
 	~KeyboardDriver();
-	virtual mangoos::common::uint32_t HandleInterrupt(mangoos::common::uint32_t esp);
+	virtual uint32_t HandleInterrupt(uint32_t esp);
 	virtual void Activate();
 };
 }

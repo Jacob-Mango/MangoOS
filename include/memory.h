@@ -1,45 +1,16 @@
-
-#ifndef __MANGOOS__MEMORYMANAGEMENT_H
-#define __MANGOOS__MEMORYMANAGEMENT_H
+#ifndef __MEMORY__H__
+#define __MEMORY__H__
 
 #include <common/types.h>
 
-namespace mangoos
-{
-
-struct MemoryChunk
-{
-	MemoryChunk *next;
-	MemoryChunk *prev;
-	bool allocated;
-	common::size_t size;
-};
-
-class MemoryManager
-{
-
-  protected:
-	MemoryChunk *first;
-
-  public:
-	static MemoryManager *activeMemoryManager;
-
-	MemoryManager(common::size_t first, common::size_t size);
-	~MemoryManager();
-
-	void *malloc(common::size_t size);
-	void free(void *ptr);
-};
-}
-
-void *operator new(unsigned size);
-void *operator new[](unsigned size);
-
-// placement new
-void *operator new(unsigned size, void *ptr);
-void *operator new[](unsigned size, void *ptr);
-
-void operator delete(void *ptr);
-void operator delete[](void *ptr);
+void memcpy(char *from, char *to, int count);
+void memcpyTF(char *to, char *from, int count);
+unsigned short *memsetw(unsigned short *dest, unsigned short val, size_t count);
+void *memset(void *dest, char val, size_t count);
+bool memzero(void *dest, size_t len);
+void *malloc(int bytes);
+void *malloc_p(int bytes);
+void *malloc_ps(char *start, int bytes);
+bool pm_setup(char *heap);
 
 #endif
