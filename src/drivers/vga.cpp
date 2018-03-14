@@ -1,6 +1,5 @@
 #include <drivers/vga.h>
 
-using namespace mangoos::common;
 using namespace mangoos::drivers;
 using namespace mangoos::hardware::communication;
 

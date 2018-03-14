@@ -1,9 +1,7 @@
 #include <hardware/communication/interrupts.h>
+#include <common/print.h>
 
 using namespace mangoos::hardware::communication;
-
-void printf(char *str);
-void printfHex(uint8_t);
 
 InterruptHandler::InterruptHandler(InterruptManager *interruptManager, uint8_t InterruptNumber)
 {

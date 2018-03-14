@@ -19,8 +19,8 @@ class MouseEventHandler
 	MouseEventHandler();
 
 	virtual void OnActivate();
-	virtual void OnMouseDown(mangoos::common::uint8_t button);
-	virtual void OnMouseUp(mangoos::common::uint8_t button);
+	virtual void OnMouseDown(uint8_t button);
+	virtual void OnMouseUp(uint8_t button);
 	virtual void OnMouseMove(int x, int y);
 };
 
@@ -28,16 +28,16 @@ class MouseDriver : public mangoos::hardware::communication::InterruptHandler, p
 {
 	mangoos::hardware::communication::Port8Bit dataport;
 	mangoos::hardware::communication::Port8Bit commandport;
-	mangoos::common::uint8_t buffer[3];
-	mangoos::common::uint8_t offset;
-	mangoos::common::uint8_t buttons;
+	uint8_t buffer[3];
+	uint8_t offset;
+	uint8_t buttons;
 
 	MouseEventHandler *handler;
 
   public:
 	MouseDriver(mangoos::hardware::communication::InterruptManager *manager, MouseEventHandler *handler);
 	~MouseDriver();
-	virtual mangoos::common::uint32_t HandleInterrupt(mangoos::common::uint32_t esp);
+	virtual uint32_t HandleInterrupt(uint32_t esp);
 	virtual void Activate();
 };
 }

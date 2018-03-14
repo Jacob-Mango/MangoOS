@@ -2,6 +2,7 @@
 
 #include <memory.h>
 #include <string.h>
+#include <bios.h>
 
 #define SECTOR_SIZE 512
 
@@ -225,7 +226,7 @@ FILE FATOpenSubDir(FILE kFile, const char *filename)
 	return file;
 }
 
-FILE FOpenFile(const char *FileName)
+FILE FATOpen(const char *FileName)
 {
 
 	FILE curDirectory;
@@ -313,5 +314,5 @@ void FATInitialize(DATADEVICE datadev)
 
 	VolRegisterFileSystem(&_FSysFat, datadev.uniqueID);
 
-	FMount();
+	FATMount();
 }

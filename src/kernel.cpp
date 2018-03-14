@@ -1,4 +1,5 @@
 #include <common/types.h>
+#include <common/print.h>
 
 #include <gdt.h>
 #include <memory.h>
@@ -16,60 +17,10 @@
 #include <tasks/task.h>
 
 using namespace mangoos;
-using namespace mangoos::common;
 using namespace mangoos::drivers;
 using namespace mangoos::hardware::communication;
 
-void printf(char *str)
-{
-	static uint16_t *VideoMemory = (uint16_t *)0xb8000;
-
-	static uint8_t x = 0, y = 0;
-
-	for (int i = 0; str[i] != '\0'; ++i)
-	{
-
-		if (x >= 80)
-		{
-			x = 0;
-			y++;
-		}
-
-		if (y >= 25)
-		{
-			for (y = 1; y < 25; y++)
-				for (x = 0; x < 80; x++)
-					VideoMemory[80 * (y - 1) + x] = VideoMemory[80 * y + x];
-
-			x = 0;
-			y = 24;
-		}
-
-		switch (str[i])
-		{
-		case '\n':
-			for (x; x < 80; x++)
-				VideoMemory[80 * y + x] = ' ';
-			x = 0;
-
-			y++;
-			break;
-		default:
-			VideoMemory[80 * y + x] = (VideoMemory[80 * y + x] & 0xFF00) | str[i];
-			x++;
-			break;
-		}
-	}
-}
-
-void printfHex(uint8_t key)
-{
-	char *foo = "00";
-	char *hex = "0123456789ABCDEF";
-	foo[0] = hex[(key >> 4) & 0xF];
-	foo[1] = hex[key & 0xF];
-	printf(foo);
-}
+bool Shutdown = false;
 
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
@@ -86,49 +37,132 @@ class Shell : public KeyboardEventHandler
 	char *currentLine;
 	int lineLength;
 
+	bool upper = false;
+
+	bool started = false;
+
   public:
+	Shell()
+	{
+	}
+
+	void Start()
+	{
+		started = true;
+		ResetLine();
+	}
+
 	void OnKeyDown(char c)
 	{
+		if (!started)
+			return;
+
+		if (c == 0x2A)
+		{
+			upper = true;
+			return;
+		}
+		else if (c == 0x36)
+		{
+			upper = false;
+			return;
+		}
+
+		if (c == 0x3A)
+			upper = !upper;
+
+		char *foo = " ";
+		if (upper)
+			foo[0] = toupper(c);
+		else
+			foo[0] = tolower(c);
+
 		char *temp;
 		memcpy(temp, currentLine, lineLength + 1);
 		temp[lineLength] = c;
 		memcpy(currentLine, temp, lineLength++);
 
-		char *foo = " ";
-		foo[0] = c;
 		printf(foo);
 
 		if (c == '\n')
 		{
 			RunLine();
-			ClearLine();
+			ResetLine();
 		}
 	}
 
 	void RunLine()
 	{
-		if (str_begins_with(currentLine, "test") > 0)
+		if (str_begins_with(currentLine, "help"))
 		{
-			printf("YOOOO");
-		} else {
-			
+			Console::Print("clear - Clears the screen.\n");
+			Console::Print("shutdown - Shutsdown the PC.\n");
+		}
+		else if (str_begins_with(currentLine, "shutdown"))
+		{
+			Console::Print("Shutting down the PC.\n");
+			Shutdown = true;
+		}
+		else if (str_begins_with(currentLine, "clear"))
+		{
+			for (uint16_t yi = 0; yi < 25; yi++)
+				for (uint16_t xi = 0; xi < 80; xi++)
+					Console::Set(xi, yi, ' ');
+			Console::SetCursor(0, 0);
+		}
+		else
+		{
+			Console::Print("Unknown command, type \"help\" for more commands.");
 		}
 	}
 
-	void ClearLine()
+	void ResetLine()
 	{
+		if (Shutdown)
+			return;
+		Console::Print("\n> ");
 		currentLine = "";
 		lineLength = 0;
 	}
+
+	void Update()
+	{
+		if (Shutdown)
+			return;
+	}
 };
+
+void ShutdownSequence()
+{
+	int mhz = 1000;
+	int ghz = 5;
+	int ns = 100;
+	int ms = 1000;
+	int s = 2;
+
+	int time = mhz * ghz * ns * ms * s;
+
+	for (int i = 0; i < time / 2; i++)
+		;
+
+	Console::Print("Goodbye.");
+
+	for (int i = 0; i < time / 2; i++)
+		;
+}
 
 extern "C" void kernelMain(const void *multiboot_structure, uint32_t /*multiboot_magic*/)
 {
+	Console::Initialize();
+
 	printf("Loading...");
 
 	GlobalDescriptorTable gdt;
 
 	TaskManager taskManager;
+
+	printf("Initializing the Shell\n");
+	Shell shell;
 
 	InterruptManager interrupts(0x20, &gdt, &taskManager);
 
@@ -136,9 +170,7 @@ extern "C" void kernelMain(const void *multiboot_structure, uint32_t /*multiboot
 
 	DriverManager drvManager;
 
-	Shell *shell = new Shell();
-
-	KeyboardDriver keyboard(&interrupts, shell);
+	KeyboardDriver keyboard(&interrupts, &shell);
 	drvManager.AddDriver(&keyboard);
 
 	PeripheralComponentInterconnectController PCIController;
@@ -150,11 +182,11 @@ extern "C" void kernelMain(const void *multiboot_structure, uint32_t /*multiboot
 	printf("Initializing Hardware, Stage 3\n");
 	interrupts.Activate();
 
-	//int width = 320;
-	//int height = 200;
-	//VideoGraphicsArray vga;
+	printf("Starting the Shell\n");
+	shell.Start();
 
-	while (1)
-	{
-	}
+	while (!Shutdown)
+		;
+
+	ShutdownSequence();
 }

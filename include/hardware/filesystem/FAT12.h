@@ -58,13 +58,13 @@ typedef struct _MOUNT_INFO
 
 } MOUNT_INFO, *PMOUNT_INFO;
 
-extern FILE FDirectory(const char *DirectoryName);
-extern void FRead(PFILE file, unsigned char *Buffer, unsigned int Length);
-extern void FWrite(PFILE file, unsigned char *Buffer, unsigned int Length);
-extern FILE FOpen(const char *FileName);
-extern void FInitialize(DATADEVICE datadev);
-extern void FMount();
-extern void FGetFilesInRoot(char *buf);
-extern char FGetNumberOfFilesInRoot();
+extern FILE FATDirectory(const char *DirectoryName);
+extern void FATRead(PFILE file, unsigned char *Buffer, unsigned int Length);
+extern void FATWrite(PFILE file, unsigned char *Buffer, unsigned int Length);
+extern FILE FATOpen(const char *FileName);
+extern void FATInitialize(DATADEVICE datadev);
+extern void FATMount();
+extern void FATGetFilesInRoot(char *buf);
+extern char FATGetNumberOfFilesInRoot();
 
 #endif

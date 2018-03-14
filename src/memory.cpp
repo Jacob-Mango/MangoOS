@@ -62,3 +62,23 @@ void *malloc_ps(char *start, int bytes)
 {
 	return start;
 }
+
+void *operator new(size_t size)
+{
+	return malloc(size);
+}
+
+void *operator new[](size_t size)
+{
+	return malloc(size);
+}
+
+void *operator new(size_t size, void *ptr)
+{
+	return ptr;
+}
+
+void *operator new[](size_t size, void *ptr)
+{
+	return ptr;
+}

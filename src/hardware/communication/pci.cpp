@@ -1,5 +1,7 @@
 #include <hardware/communication/pci.h>
 
+#include <common/print.h>
+
 using namespace mangoos::drivers;
 using namespace mangoos::hardware::communication;
 
@@ -40,9 +42,6 @@ bool PeripheralComponentInterconnectController::DeviceHasFunctions(uint16_t bus,
 {
 	return Read(bus, device, 0, 0x0E) & (1 << 7);
 }
-
-void printf(char *str);
-void printfHex(uint8_t);
 
 void PeripheralComponentInterconnectController::SelectDrivers(DriverManager *driverManager, mangoos::hardware::communication::InterruptManager *interrupts)
 {

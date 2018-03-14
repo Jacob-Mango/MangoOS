@@ -2,7 +2,6 @@
 #include <tasks/task.h>
 
 using namespace mangoos;
-using namespace mangoos::common;
 
 TaskManager::TaskManager()
 {

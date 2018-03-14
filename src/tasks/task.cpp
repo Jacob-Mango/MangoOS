@@ -2,7 +2,6 @@
 #include <tasks/taskmanager.h>
 
 using namespace mangoos;
-using namespace mangoos::common;
 
 Task::Task(GlobalDescriptorTable *gdt, void entrypoint())
 {

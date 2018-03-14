@@ -19,4 +19,10 @@ static const bool False = 0;
 static const bool True = 1;
 #endif
 
+#ifdef __cplusplus11
+#define NULL nullptr
+#else
+#define NULL 0
+#endif
+
 #endif

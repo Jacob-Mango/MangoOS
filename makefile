@@ -6,6 +6,7 @@ objects = obj/loader.o \
           obj/gdt.o \
           obj/memory.o \
           obj/string.o \
+		  obj/common/print.o \
           obj/drivers/driver.o \
           obj/hardware/communication/port.o \
           obj/hardware/communication/interruptstubs.o \

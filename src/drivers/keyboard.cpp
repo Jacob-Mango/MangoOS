@@ -1,12 +1,10 @@
 #include <common/types.h>
+#include <common/print.h>
 
 #include <drivers/keyboard.h>
 
 using namespace mangoos::drivers;
 using namespace mangoos::hardware::communication;
-
-void printf(char *str);
-void printfHex(uint8_t);
 
 KeyboardEventHandler::KeyboardEventHandler()
 {
@@ -105,7 +103,7 @@ uint32_t KeyboardDriver::HandleInterrupt(uint32_t esp)
 			handler->OnKeyDown('t');
 			break;
 		case 0x15:
-			handler->OnKeyDown('z');
+			handler->OnKeyDown('y');
 			break;
 		case 0x16:
 			handler->OnKeyDown('u');
@@ -149,7 +147,7 @@ uint32_t KeyboardDriver::HandleInterrupt(uint32_t esp)
 			break;
 
 		case 0x2C:
-			handler->OnKeyDown('y');
+			handler->OnKeyDown('z');
 			break;
 		case 0x2D:
 			handler->OnKeyDown('x');
@@ -186,12 +184,16 @@ uint32_t KeyboardDriver::HandleInterrupt(uint32_t esp)
 			handler->OnKeyDown(' ');
 			break;
 
-		default:
-		{
-			printf("KEYBOARD 0x");
-			printfHex(key);
+		case 0x0C:
+			handler->OnKeyDown('-');
 			break;
-		}
+		case 0x0D:
+			handler->OnKeyDown('+');
+			break;
+
+		default:
+			handler->OnKeyDown(key);
+			break;
 		}
 	}
 	return esp;

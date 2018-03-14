@@ -13,4 +13,10 @@ void *malloc_p(int bytes);
 void *malloc_ps(char *start, int bytes);
 bool pm_setup(char *heap);
 
+void *operator new(size_t size);
+void *operator new[](size_t size);
+
+void *operator new(size_t size, void *ptr);
+void *operator new[](size_t size, void *ptr);
+
 #endif

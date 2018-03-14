@@ -1,13 +1,5 @@
 #include <string.h>
 
-size_t strlen(const char *str)
-{
-    size_t i = 0;
-    while (str[i] != 0)
-        i++;
-    return i;
-}
-
 void atoi(char *str, int *a)
 {
     int k = 0;
@@ -91,11 +83,135 @@ size_t str_begins_with(const char *str, const char *with)
     return ret;
 }
 
-size_t strcmp(char *str1, char *str2)
+char *toupper(char *str)
 {
-    size_t res = 0;
+    char *p = str;
+    while (*p != 0)
+    {
+        if (*p > 96 && *p < 123)
+        {
+            *p -= 32;
+        }
+        ++p;
+    }
+    return p;
+}
+
+char *tolower(char *str)
+{
+    char *p = str;
+    while (*p != 0)
+    {
+        if (*p > 64 && *p < 91)
+        {
+            *p += 32;
+        }
+        ++p;
+    }
+    return p;
+}
+
+char toupper(char c)
+{
+    if (c > 96 && c < 123)
+    {
+        c -= 32;
+    }
+    return c;
+}
+
+char tolower(char c)
+{
+    if (c > 64 && c < 91)
+    {
+        c += 32;
+    }
+    return c;
+}
+
+size_t strcmp(const char *str1, const char *str2)
+{
+    int res = 0;
     while (!(res = *(unsigned char *)str1 - *(unsigned char *)str2) && *str2)
         ++str1, ++str2;
-
+    if (res < 0)
+        res = -1;
+    if (res > 0)
+        res = 1;
     return res;
+}
+
+void strsplit(char *s1, char delim, int &count)
+{
+    int i = 0;
+    int j = 0;
+    while (s1[j] != '\0')
+    {
+        while (s1[i] != delim)
+            i++;
+        s1[i] = '\0';
+        count++;
+    }
+}
+
+char *strcpy(char *s1, const char *s2)
+{
+    char *s1_p = s1;
+    while (*s1++ = *s2++);
+    return s1_p;
+}
+
+size_t strlen(const char *str)
+{
+    size_t len = 0;
+    while (str[len++]);
+    return len;
+}
+
+size_t strncpy(char *dest, char *src, size_t len)
+{
+    char *d, *s;
+    size_t val = 0;
+    d = dest;
+    s = src;
+    while (*s != '\0' && len != 0)
+    {
+        *d++ = *s++;
+        len--;
+        val++;
+    }
+    *d++ = '\0';
+    return val;
+}
+
+char *strchr(char *str, int character)
+{
+    do
+    {
+        if (*str == character)
+            return (char *)str;
+    }
+    while (*str++);
+    return 0;
+}
+
+void strspr(char *str, char *buff, size_t sep, short which)
+{
+    short counter = 0;
+    char *backup = str;
+    bool found = false;
+    do
+    {
+        if (*str == sep)  {
+            counter++;
+            continue;
+        }
+        if (counter == which)
+            found = true;
+    }
+    while (*str++);
+    if (!found)
+        return;
+    *backup += counter;
+    buff = backup;
 }
